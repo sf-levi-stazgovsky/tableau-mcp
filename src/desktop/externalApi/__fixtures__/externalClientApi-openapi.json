@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Tableau External Client API",
-    "version": "0.2.25",
+    "version": "0.2.26",
     "description": "Loopback HTTP interface for reading and authoring the open Tableau Desktop document. Clients authenticate with the bearer token published in the per-user discovery file."
   },
   "servers": [
@@ -3310,6 +3310,48 @@
         }
       }
     },
+    "/v0/workbook/extensions": {
+      "get": {
+        "summary": "List workbook extensions",
+        "description": "Lists viz and dashboard extensions placed in the open workbook. packagePath is null when the extension has no local package.",
+        "operationId": "getWorkbookExtensions",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserAgent"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lists viz and dashboard extensions placed in the open workbook. packagePath is null when the extension has no local package.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkbookExtensionList"
+                }
+              }
+            }
+          },
+          "202": {
+            "$ref": "#/components/responses/Accepted"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "421": {
+            "$ref": "#/components/responses/MisdirectedRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
+          }
+        }
+      }
+    },
     "/v0/workbook/worksheets": {
       "get": {
         "summary": "List worksheets",
@@ -5993,6 +6035,36 @@
             "items": {
               "$ref": "#/components/schemas/StoryboardItem"
             }
+          }
+        }
+      },
+      "WorkbookExtensionSheet": {
+        "type": "object",
+        "description": "The worksheet or dashboard that hosts an extension.",
+        "required": ["id", "name", "kind"],
+        "properties": {
+          "id": { "type": "string", "description": "Stable sheet id." },
+          "name": { "type": "string", "description": "Current sheet name." },
+          "kind": { "type": "string", "enum": ["worksheet", "dashboard"], "description": "worksheet or dashboard." }
+        }
+      },
+      "WorkbookExtension": {
+        "type": "object",
+        "description": "A viz or dashboard extension placed in the open workbook.",
+        "required": ["sheet", "extensionUrl", "packagePath"],
+        "properties": {
+          "sheet": { "$ref": "#/components/schemas/WorkbookExtensionSheet" },
+          "extensionUrl": { "type": "string", "description": "The extension runtime URL." },
+          "packagePath": { "type": ["string", "null"], "description": "Resolved package root, or null when hosted." }
+        }
+      },
+      "WorkbookExtensionList": {
+        "type": "object",
+        "required": ["extensions"],
+        "properties": {
+          "extensions": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/WorkbookExtension" }
           }
         }
       },
