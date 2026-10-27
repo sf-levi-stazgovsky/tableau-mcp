@@ -3313,7 +3313,7 @@
     "/v0/workbook/extensions": {
       "get": {
         "summary": "List workbook extensions",
-        "description": "Lists viz and dashboard extensions placed in the open workbook. Each entry identifies the host sheet by stable id and kind, and the extension by its full ExtensionKey (id, version, url). packagePath is null when the extension has no local package.",
+        "description": "Lists viz and dashboard extensions placed in the open workbook. Each entry has a unique instanceId for the placed zone, identifies the host sheet by stable id and kind, and the extension by its full ExtensionKey (id, version, url). packagePath is null when the extension has no local package.",
         "operationId": "getWorkbookExtensions",
         "parameters": [
           {
@@ -3322,7 +3322,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Lists viz and dashboard extensions placed in the open workbook. Each entry identifies the host sheet by stable id and kind, and the extension by its full ExtensionKey (id, version, url). packagePath is null when the extension has no local package.",
+            "description": "Lists viz and dashboard extensions placed in the open workbook. Each entry has a unique instanceId for the placed zone, identifies the host sheet by stable id and kind, and the extension by its full ExtensionKey (id, version, url). packagePath is null when the extension has no local package.",
             "content": {
               "application/json": {
                 "schema": {
@@ -6060,8 +6060,12 @@
       "WorkbookExtension": {
         "type": "object",
         "description": "A viz or dashboard extension placed in the open workbook.",
-        "required": ["sheet", "extension", "packagePath"],
+        "required": ["instanceId", "sheet", "extension", "packagePath"],
         "properties": {
+          "instanceId": {
+            "type": "string",
+            "description": "AddIn instance id for this placed zone. Unique per extension zone on a sheet; use it when a dashboard hosts more than one extension."
+          },
           "sheet": { "$ref": "#/components/schemas/WorkbookExtensionSheet" },
           "extension": { "$ref": "#/components/schemas/WorkbookExtensionKey" },
           "packagePath": { "type": ["string", "null"], "description": "Resolved on-disk package root, or null when the extension has no local package." }

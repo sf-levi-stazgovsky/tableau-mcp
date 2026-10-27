@@ -994,6 +994,7 @@ export const workbookExtensionKeySchema = z
 
 export const workbookExtensionSchema = z
   .object({
+    instanceId: z.string(),
     sheet: workbookExtensionSheetSchema,
     extension: workbookExtensionKeySchema,
     packagePath: z.string().nullable(),
