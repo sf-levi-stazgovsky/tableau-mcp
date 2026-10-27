@@ -980,15 +980,22 @@ export type DatasourceList = z.infer<typeof datasourceListSchema>;
 export const workbookExtensionSheetSchema = z
   .object({
     id: z.string(),
-    name: z.string(),
     kind: z.enum(['worksheet', 'dashboard']),
+  })
+  .passthrough();
+
+export const workbookExtensionKeySchema = z
+  .object({
+    id: z.string(),
+    version: z.string(),
+    url: z.string(),
   })
   .passthrough();
 
 export const workbookExtensionSchema = z
   .object({
     sheet: workbookExtensionSheetSchema,
-    extensionUrl: z.string(),
+    extension: workbookExtensionKeySchema,
     packagePath: z.string().nullable(),
   })
   .passthrough();
@@ -1001,6 +1008,7 @@ export const workbookExtensionListSchema = z
   .passthrough();
 export type WorkbookExtensionList = z.infer<typeof workbookExtensionListSchema>;
 export type WorkbookExtension = z.infer<typeof workbookExtensionSchema>;
+export type WorkbookExtensionKey = z.infer<typeof workbookExtensionKeySchema>;
 
 /** Worksheet summary logical table returned by `GET /v0/workbook/worksheets/{id}/summaryData`. */
 export const summaryDataSchema = z

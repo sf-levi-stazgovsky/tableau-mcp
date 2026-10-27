@@ -3313,7 +3313,7 @@
     "/v0/workbook/extensions": {
       "get": {
         "summary": "List workbook extensions",
-        "description": "Lists viz and dashboard extensions placed in the open workbook. packagePath is null when the extension has no local package.",
+        "description": "Lists viz and dashboard extensions placed in the open workbook. Each entry identifies the host sheet by stable id and kind, and the extension by its full ExtensionKey (id, version, url). packagePath is null when the extension has no local package.",
         "operationId": "getWorkbookExtensions",
         "parameters": [
           {
@@ -3322,7 +3322,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Lists viz and dashboard extensions placed in the open workbook. packagePath is null when the extension has no local package.",
+            "description": "Lists viz and dashboard extensions placed in the open workbook. Each entry identifies the host sheet by stable id and kind, and the extension by its full ExtensionKey (id, version, url). packagePath is null when the extension has no local package.",
             "content": {
               "application/json": {
                 "schema": {
@@ -6041,21 +6041,30 @@
       "WorkbookExtensionSheet": {
         "type": "object",
         "description": "The worksheet or dashboard that hosts an extension.",
-        "required": ["id", "name", "kind"],
+        "required": ["id", "kind"],
         "properties": {
-          "id": { "type": "string", "description": "Stable sheet id." },
-          "name": { "type": "string", "description": "Current sheet name." },
+          "id": { "type": "string", "description": "Stable sheet id, the same id the worksheet and dashboard routes use." },
           "kind": { "type": "string", "enum": ["worksheet", "dashboard"], "description": "worksheet or dashboard." }
+        }
+      },
+      "WorkbookExtensionKey": {
+        "type": "object",
+        "description": "The ExtensionKey that uniquely identifies a placed extension: id, version, and url.",
+        "required": ["id", "version", "url"],
+        "properties": {
+          "id": { "type": "string", "description": "Extension package or hosted registration id." },
+          "version": { "type": "string", "description": "Extension package or hosted registration version." },
+          "url": { "type": "string", "description": "The extension's runtime URL." }
         }
       },
       "WorkbookExtension": {
         "type": "object",
         "description": "A viz or dashboard extension placed in the open workbook.",
-        "required": ["sheet", "extensionUrl", "packagePath"],
+        "required": ["sheet", "extension", "packagePath"],
         "properties": {
           "sheet": { "$ref": "#/components/schemas/WorkbookExtensionSheet" },
-          "extensionUrl": { "type": "string", "description": "The extension runtime URL." },
-          "packagePath": { "type": ["string", "null"], "description": "Resolved package root, or null when hosted." }
+          "extension": { "$ref": "#/components/schemas/WorkbookExtensionKey" },
+          "packagePath": { "type": ["string", "null"], "description": "Resolved on-disk package root, or null when the extension has no local package." }
         }
       },
       "WorkbookExtensionList": {
